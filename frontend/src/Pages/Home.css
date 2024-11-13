@@ -1,0 +1,34 @@
+.home-outer-container {
+    display: flex;
+    flex-direction: column;
+    margin: 50px;
+    margin-top: 20px;
+    height: calc(100% - 100px);
+    width: calc(100% - 100px);
+    align-items: center;
+}
+
+.home-table {
+    height: 100%;
+    width: 100%;
+}
+
+.home-title {
+    display: flex;
+    font-size: 40px;
+    font-weight: bold;
+    /* margin-bottom: 15px; */
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+.home-table-column {
+    text-align: center;
+}
+
+
+.home-table-column-label {
+    cursor: pointer !important;
+    text-align: center;
+}

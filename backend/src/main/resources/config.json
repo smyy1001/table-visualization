@@ -1,7 +1,7 @@
 {
     "applicationName": "My App",
     "databaseType": "oracle",
-    "databaseUrl": "jdbc:oracle:thin:@192.168.1.20:1521/XEPDB1",
+    "databaseUrl": "jdbc:oracle:thin:@oracle-db:1521/XEPDB1",
     "databaseUser": "system",
     "databasePassword": "password",
     "databaseName": "XEPDB1",
@@ -18,7 +18,7 @@
                     "fieldLabel": "Adı",
                     "canFilter": "true",
                     "canSort": "true",
-                    "viewOnResults": "false",
+                    "viewOnResults": "true",
                     "triggerTable": "detayTablo1",
                     "insertable": "true",
                     "canEmptyForInsert": "false"
@@ -29,8 +29,8 @@
                     "fieldLabel": "Kayıt Tarihi",
                     "canFilter": "true",
                     "canSort": "true",
-                    "viewOnResults": "false",
-                    "triggerTable": "detayTablo1",
+                    "viewOnResults": "true",
+                    "triggerTable": "",
                     "insertable": "false",
                     "canEmptyForInsert": "true"
                 }
@@ -48,7 +48,7 @@
                     "fieldLabel": "Adı",
                     "canFilter": "true",
                     "canSort": "true",
-                    "viewOnResults": "false",
+                    "viewOnResults": "true",
                     "insertable": "false",
                     "canEmptyForInsert": "true"
                 }

@@ -21,7 +21,6 @@ public class ConfigController {
 
     @GetMapping("/getConfig")
     public ResponseEntity<Config> getAppConfig() {
-        // Fetch the config using the service
         Config config = configService.getConfig();
         return ResponseEntity.ok(config);
     }

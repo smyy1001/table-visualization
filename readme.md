@@ -4,7 +4,7 @@ parametreler olmalı:
 {
     "applicationName": "My App",
     "databaseType": "oracle",
-    "databaseUrl": "jdbc:oracle:thin:@192.168.1.20:1521/XEPDB1",
+    "databaseUrl": "jdbc:oracle:thin:@192.168.88.136:1521/XEPDB1",
     "databaseUser": "system",
     "databasePassword": "password",
     "databaseName": "XEPDB1",
