@@ -1,0 +1,58 @@
+{
+    "applicationName": "My App",
+    "databaseType": "oracle",
+    "databaseUrl": "jdbc:oracle:thin:@192.168.1.20:1521/XEPDB1",
+    "databaseUser": "system",
+    "databasePassword": "password",
+    "databaseName": "XEPDB1",
+    "tableDetails": [
+        {
+            "tableType": "mainTable",
+            "tableName": "anaTablo",
+            "tableLabel": "Ana Tablo Bilgileri",
+            "insertable": "false",
+            "fields": [
+                {
+                    "fieldName": "name",
+                    "type": "string",
+                    "fieldLabel": "Adı",
+                    "canFilter": "true",
+                    "canSort": "true",
+                    "viewOnResults": "false",
+                    "triggerTable": "detayTablo1",
+                    "insertable": "true",
+                    "canEmptyForInsert": "false"
+                },
+                {
+                    "fieldName": "recordDate",
+                    "type": "date",
+                    "fieldLabel": "Kayıt Tarihi",
+                    "canFilter": "true",
+                    "canSort": "true",
+                    "viewOnResults": "false",
+                    "triggerTable": "detayTablo1",
+                    "insertable": "false",
+                    "canEmptyForInsert": "true"
+                }
+            ]
+        },
+        {
+            "tableType": "detailTable",
+            "tableName": "detayTablo1",
+            "tableLabel": "Detay Tablo Bilgileri",
+            "insertable": "true",
+            "fields": [
+                {
+                    "fieldName": "name",
+                    "type": "numeric",
+                    "fieldLabel": "Adı",
+                    "canFilter": "true",
+                    "canSort": "true",
+                    "viewOnResults": "false",
+                    "insertable": "false",
+                    "canEmptyForInsert": "true"
+                }
+            ]
+        }
+    ]
+}
