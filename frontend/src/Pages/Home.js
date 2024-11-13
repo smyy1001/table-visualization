@@ -185,8 +185,11 @@ const Home = () => {
 
                                     return field.triggerTable ? (
                                         <a
-                                            href={`#${field.triggerTable}`}
-                                            onClick={() => handleTriggerClick(field.triggerTable)}
+                                            href="#"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleTriggerClick(field.triggerTable);
+                                            }}
                                         >
                                             {formattedText}
                                         </a>
@@ -225,43 +228,6 @@ const Home = () => {
                         );
                     })}
                 </Table>
-
-                {/* <Modal
-                    title={modalTitle}
-                    visible={isModalVisible}
-                    onCancel={handleModalClose}
-                    footer={null}
-                >
-                    <Table
-                        dataSource={modalData}
-                        rowKey="id"
-                        pagination={{ pageSize: perPage }}
-                        className='detail-table'
-                    >
-                        {detailTableConfig.fields.map((field) => (
-                            <Table.Column
-                                key={field.fieldName}
-                                className='home-table-column'
-                                title={
-                                    <div className='home-table-column-label'>
-                                        {field.canSort ? (
-                                            <Tooltip title='Sıralamak için tıklayın!'>
-                                                <div
-                                                    onClick={() => handleDetailSort(field.fieldName)}
-                                                >
-                                                    {field.fieldLabel}
-                                                </div>
-                                            </Tooltip>
-                                        ) : (
-                                            field.fieldLabel
-                                        )}
-                                    </div>
-                                }
-                                dataIndex={field.fieldName}
-                            />
-                        ))}
-                    </Table>
-                </Modal> */}
 
                 <Modal
                     title={modalTitle}
