@@ -4,7 +4,7 @@ parametreler olmalı:
 {
     "applicationName": "My App",
     "databaseType": "oracle",
-    "databaseUrl": "jdbc:oracle:thin:@192.168.88.136:1521/XEPDB1",
+    "databaseUrl": "jdbc:oracle:thin:@192.168.1.20:1521/XEPDB1",
     "databaseUser": "system",
     "databasePassword": "password",
     "databaseName": "XEPDB1",
@@ -67,7 +67,7 @@ Parametrelerin Açiklamasi:
 1. applicationName: Uygulama ayaga kalktiginda arayüzde görüntülenecek ismi,
 2. tableDetails: Uygulamanin kullanmak için ihtiya duyacagi tablolarin listesi,
 3. tableType: Tablonun tipini ifade eder, mainTable ve detailTable olabilir. "mainTable" tipinde sadece tek tablo olabilir ve arayüzde görüntülenecek veri bu tablodadir.
-4. insertable: Bu tabloya yeni bir kayit eklenebilir mi seenegi, eger true ise fields kisminda bulunan alanlardan insertable degeri true olan alanlari kapsayan bir form ikmali ve canEmptyForInsert kismi false olan kolonlar için de degerlerin girilmesi zorunlu olmall
+4. insertable: Bu tabloya yeni bir kayit eklenebilir mi seçenegi, eger true ise fields kisminda bulunan alanlardan insertable degeri true olan alanlari kapsayan bir form çıkmalı ve canEmptyForInsert kısmı false olan kolonlar için de degerlerin girilmesi zorunlu olmalı
 5. fields.type: Kolonun tipini ifade eder, numeric, string, date gibi degerleri alabilir.
 6. viewOnResults: Eger true ise arayüzde gösterilebilir bir kolon, false ise gösterilemez
 7. triggerTable: Opsiyonel bir konfigürasyon, eger dolu ise; arayüzde bu kolon görüntülenirken

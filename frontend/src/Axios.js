@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const baseURL = process.env.REACT_APP_BACKEND_URL; 
-// const baseURL = 'http://192.168.88.136:8080'; 
+// const baseURL = 'http://192.168.1.20:8080'; 
 
 console.log(baseURL);
 
