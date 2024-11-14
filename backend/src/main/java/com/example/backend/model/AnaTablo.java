@@ -6,12 +6,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-// import java.time.LocalDate;
-// import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Table(name = "ANATABLO")
+@Table(name = "ANATABLO", schema = "SYS")
 public class AnaTablo {
 
     @Id

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Axios from '../Axios';
-import { Modal, Table, Tooltip, Input, DatePicker } from 'antd';
+import { Modal, Table, Tooltip, Input, DatePicker, Form, Button } from 'antd';
+import { FileAddTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 import './Home.css';
 
@@ -11,16 +12,16 @@ const Home = () => {
     const [detailTableData, setDetailTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isMainTableAddModalVisible, setIsMainTableAddModalVisible] = useState(false);
+    const [isDetailTableAddModalVisible, setIsDetailTableAddModalVisible] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
     const [modalData, setModalData] = useState([]);
     const [sortOrder, setSortOrder] = useState(null);
     const [sortedColumn, setSortedColumn] = useState(null);
     const [detailSortOrder, setDetailSortOrder] = useState(null);
     const [detailSortedColumn, setDetailSortedColumn] = useState(null);
-
-    // !
-    // INSERTION LOGIC (insertable - canEmptyforInsert)
-    // !
+    const [mainTableForm] = Form.useForm();
+    const [detailTableForm] = Form.useForm();
 
     useEffect(() => {
         async function fetchConfig() {
@@ -136,16 +137,79 @@ const Home = () => {
         }
     };
 
+
+    // Main Table 
+    const showMainTableAddModal = () => {
+        setIsMainTableAddModalVisible(true);
+    };
+
+    const handleMainTableFormModalClose = () => {
+        setIsMainTableAddModalVisible(false);
+        mainTableForm.resetFields();
+    };
+
+    const handleMainTableFormSubmit = async (values) => {
+        console.log('Form Values:', values);
+        
+        const formattedValues = {
+            ...values,
+            recordDate: values.recordDate.toISOString(),
+        };
+
+        console.log("Formatted Data:", formattedValues);
+
+        try {
+            const response = await Axios.post('/api/ana/insert', formattedValues);
+            console.log('Response:', response.data);
+
+            setIsMainTableAddModalVisible(false);
+            mainTableForm.resetFields();
+        } catch (error) {
+            console.error('Error sending form data:', error);
+        }
+    };
+
+
+    // Detail Table
+    const showDetailTableAddModal = () => {
+        setIsDetailTableAddModalVisible(true);
+    };
+
+    const handleDetailTableFormModalClose = () => {
+        setIsDetailTableAddModalVisible(false);
+        detailTableForm.resetFields();
+    };
+
+    const handleDetailTableFormSubmit = (values) => {
+        console.log('Form Values:', values);
+        // BACKEND REQUEST HERE
+        setIsDetailTableAddModalVisible(false);
+        detailTableForm.resetFields();
+    };
+
     return (
         <>
             <div className='home-outer-container'>
-                <div className='home-title'>
-                    {appConfig.applicationName}
-                </div>
+                <div className='home-title'>{appConfig.applicationName}</div>
                 <Table
                     title={() => (
-                        <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                            {mainTableConfig.tableLabel}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
+                                {mainTableConfig.tableLabel}
+                            </div>
+                            <div>
+                                {mainTableConfig.insertable && (
+                                    <Button onClick={showMainTableAddModal}>
+                                        Ekle <FileAddTwoTone />
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     )}
                     dataSource={filteredData}
@@ -164,9 +228,7 @@ const Home = () => {
                                     <div className='home-table-column-label'>
                                         {field.canSort ? (
                                             <Tooltip title='Sıralamak için tıklayın!'>
-                                                <div
-                                                    onClick={() => handleSort(field.fieldName)}
-                                                >
+                                                <div onClick={() => handleSort(field.fieldName)}>
                                                     {field.fieldLabel}
                                                 </div>
                                             </Tooltip>
@@ -178,11 +240,9 @@ const Home = () => {
                                 dataIndex={field.fieldName}
                                 render={(text, record) => {
                                     let formattedText = text;
-
                                     if (field.fieldName === 'recordDate') {
                                         formattedText = moment(text).format('YYYY-MM-DD');
                                     }
-
                                     return field.triggerTable ? (
                                         <a
                                             href="#"
@@ -197,7 +257,6 @@ const Home = () => {
                                         formattedText
                                     );
                                 }}
-
                                 filterDropdown={() =>
                                     field.canFilter ? (
                                         field.fieldName === 'recordDate' ? (
@@ -212,7 +271,6 @@ const Home = () => {
                                                     }
                                                 }}
                                             />
-
                                         ) : (
                                             <Input
                                                 placeholder="Ara"
@@ -223,11 +281,45 @@ const Home = () => {
                                         )
                                     ) : null
                                 }
-
                             />
                         );
                     })}
                 </Table>
+
+
+                <Modal
+                    title="Ana Tabloya Yeni Kayıt Ekle"
+                    visible={isMainTableAddModalVisible}
+                    onCancel={handleMainTableFormModalClose}
+                    footer={null}
+                >
+                    <Form form={mainTableForm} layout="vertical" onFinish={handleMainTableFormSubmit}>
+                        {mainTableConfig.fields
+                            // .filter((field) => field.insertable)
+                            .map((field) => (
+                                <Form.Item
+                                    key={field.fieldName}
+                                    label={field.fieldLabel}
+                                    name={field.fieldName}
+                                    rules={[
+                                        {
+                                            required: !field.canEmptyForInsert,
+                                            message: `${field.fieldLabel} zorunludur`,
+                                        },
+                                    ]}
+                                >
+                                    {field.fieldName === 'recordDate' ? (
+                                        <DatePicker format="YYYY-MM-DD" />
+                                    ) : (
+                                        <Input />
+                                    )}
+                                </Form.Item>
+                            ))}
+                        <Button type="primary" htmlType="submit">
+                            Kaydet
+                        </Button>
+                    </Form>
+                </Modal>
 
                 <Modal
                     title={modalTitle}
@@ -249,9 +341,7 @@ const Home = () => {
                                     <div className='home-table-column-label'>
                                         {field.canSort ? (
                                             <Tooltip title='Sıralamak için tıklayın!'>
-                                                <div
-                                                    onClick={() => handleDetailSort(field.fieldName)}
-                                                >
+                                                <div onClick={() => handleDetailSort(field.fieldName)}>
                                                     {field.fieldLabel}
                                                 </div>
                                             </Tooltip>
@@ -274,11 +364,48 @@ const Home = () => {
                             />
                         ))}
                     </Table>
-                </Modal>
+                    <div style={{ display: 'flex', justifyContent: 'end', marginTop: '10px' }}>
+                        {detailTableConfig.insertable && (
+                            <Button onClick={showDetailTableAddModal}>
+                                Ekle <FileAddTwoTone />
+                            </Button>
+                        )}
+                    </div>
 
+                    <Modal
+                        title="Detaylar Tablosuna Yeni Kayıt Ekle"
+                        visible={isDetailTableAddModalVisible}
+                        onCancel={handleDetailTableFormModalClose}
+                        footer={null}
+                    >
+                        <Form form={detailTableForm} layout="vertical" onFinish={handleDetailTableFormSubmit}>
+                            {detailTableConfig.fields
+                                // .filter((field) => field.insertable)
+                                .map((field) => (
+                                    <Form.Item
+                                        key={field.fieldName}
+                                        label={field.fieldLabel}
+                                        name={field.fieldName}
+                                        rules={[
+                                            {
+                                                required: !field.canEmptyForInsert,
+                                                message: `${field.fieldLabel} zorunludur`,
+                                            },
+                                        ]}
+                                    >
+                                        <Input />
+                                    </Form.Item>
+                                ))}
+                            <Button type="primary" htmlType="submit">
+                                Kaydet
+                            </Button>
+                        </Form>
+                    </Modal>
+                </Modal>
             </div>
         </>
     );
 };
 
 export default Home;
+

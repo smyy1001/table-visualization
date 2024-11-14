@@ -10,7 +10,7 @@
             "tableType": "mainTable",
             "tableName": "anaTablo",
             "tableLabel": "Ana Tablo Bilgileri",
-            "insertable": "false",
+            "insertable": "true",
             "fields": [
                 {
                     "fieldName": "name",
@@ -20,7 +20,6 @@
                     "canSort": "true",
                     "viewOnResults": "true",
                     "triggerTable": "detayTablo1",
-                    "insertable": "true",
                     "canEmptyForInsert": "false"
                 },
                 {
@@ -31,7 +30,6 @@
                     "canSort": "true",
                     "viewOnResults": "true",
                     "triggerTable": "",
-                    "insertable": "false",
                     "canEmptyForInsert": "true"
                 }
             ]
@@ -49,8 +47,7 @@
                     "canFilter": "true",
                     "canSort": "true",
                     "viewOnResults": "true",
-                    "insertable": "false",
-                    "canEmptyForInsert": "true"
+                    "canEmptyForInsert": "false"
                 }
             ]
         }
