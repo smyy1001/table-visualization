@@ -2,8 +2,8 @@
     "applicationName": "My App",
     "databaseType": "oracle",
     "databaseUrl": "jdbc:oracle:thin:@oracle-db:1521/XEPDB1",
-    "databaseUser": "system",
-    "databasePassword": "password",
+    "databaseUser": "new_user",
+    "databasePassword": "passw",
     "databaseName": "XEPDB1",
     "tableDetails": [
         {
@@ -19,7 +19,7 @@
                     "canFilter": "true",
                     "canSort": "true",
                     "viewOnResults": "true",
-                    "triggerTable": "detayTablo1",
+                    "triggerTable": "detTablo",
                     "canEmptyForInsert": "false"
                 },
                 {
@@ -36,7 +36,7 @@
         },
         {
             "tableType": "detailTable",
-            "tableName": "detayTablo1",
+            "tableName": "detTablo",
             "tableLabel": "Detay Tablo Bilgileri",
             "insertable": "true",
             "fields": [

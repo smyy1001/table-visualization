@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Axios from '../Axios';
-import { Modal, Table, Tooltip, Input, DatePicker, Form, Button } from 'antd';
+import { Modal, Table, Tooltip, Input, InputNumber, DatePicker, Form, Button } from 'antd';
 import { FileAddTwoTone } from '@ant-design/icons';
 import moment from 'moment';
 import './Home.css';
@@ -11,11 +11,11 @@ const Home = () => {
     const [mainTableData, setMainTableData] = useState([]);
     const [detailTableData, setDetailTableData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [filteredDetailData, setFilteredDetailData] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isMainTableAddModalVisible, setIsMainTableAddModalVisible] = useState(false);
     const [isDetailTableAddModalVisible, setIsDetailTableAddModalVisible] = useState(false);
     const [modalTitle, setModalTitle] = useState('');
-    const [modalData, setModalData] = useState([]);
     const [sortOrder, setSortOrder] = useState(null);
     const [sortedColumn, setSortedColumn] = useState(null);
     const [detailSortOrder, setDetailSortOrder] = useState(null);
@@ -31,20 +31,19 @@ const Home = () => {
         fetchConfig();
     }, []);
 
-    useEffect(() => {
-        async function fetchMain() {
-            const result = await Axios.get('/api/ana');
-            setMainTableData(result.data);
-            setFilteredData(result.data);
-        }
-        fetchMain();
-    }, [appConfig]);
+    async function fetchMain() {
+        const result = await Axios.get('/api/ana');
+        setMainTableData(result.data);
+        setFilteredData(result.data);
+    }
+    async function fetchDetail() {
+        const result = await Axios.get('/api/detay');
+        setDetailTableData(result.data);
+        setFilteredDetailData(result.data);
+    }
 
     useEffect(() => {
-        async function fetchDetail() {
-            const result = await Axios.get('/api/detay');
-            setDetailTableData(result.data);
-        }
+        fetchMain();
         fetchDetail();
     }, [appConfig]);
 
@@ -62,12 +61,12 @@ const Home = () => {
 
     const handleTriggerClick = (triggerTable) => {
         setModalTitle(detailTableConfig.tableLabel);
-        setModalData(detailTableData);
         setIsModalVisible(true);
     };
 
     const handleModalClose = () => {
         setIsModalVisible(false);
+        setFilteredDetailData(detailTableData);
     };
 
     const handleSort = (fieldName) => {
@@ -96,14 +95,14 @@ const Home = () => {
         setDetailSortOrder(newSortOrder);
         setDetailSortedColumn(fieldName);
 
-        const sortedData = [...detailTableData].sort((a, b) => {
+        const sortedData = [...filteredDetailData].sort((a, b) => {
             if (newSortOrder === 'ascend') {
                 return a[fieldName] > b[fieldName] ? 1 : -1;
             } else {
                 return a[fieldName] < b[fieldName] ? 1 : -1;
             }
         });
-        setDetailTableData(sortedData);
+        setFilteredDetailData(sortedData);
     };
 
     const handleFilter = (fieldName, value) => {
@@ -125,7 +124,7 @@ const Home = () => {
 
     const handleDetailFilter = (fieldName, value) => {
         if (value === null || value === '') {
-            setDetailTableData(detailTableData);
+            setFilteredDetailData(detailTableData);
         } else {
             const newFilteredData = detailTableData.filter((item) => {
                 return item[fieldName]
@@ -133,7 +132,7 @@ const Home = () => {
                     .toLowerCase()
                     .includes(value.toString().toLowerCase());
             });
-            setDetailTableData(newFilteredData);
+            setFilteredDetailData(newFilteredData);
         }
     };
 
@@ -149,19 +148,15 @@ const Home = () => {
     };
 
     const handleMainTableFormSubmit = async (values) => {
-        console.log('Form Values:', values);
-        
         const formattedValues = {
             ...values,
-            recordDate: values.recordDate.toISOString(),
+            recordDate: (values.recordDate) ? values.recordDate.toISOString() : null,
         };
-
-        console.log("Formatted Data:", formattedValues);
 
         try {
             const response = await Axios.post('/api/ana/insert', formattedValues);
             console.log('Response:', response.data);
-
+            fetchMain();
             setIsMainTableAddModalVisible(false);
             mainTableForm.resetFields();
         } catch (error) {
@@ -180,11 +175,16 @@ const Home = () => {
         detailTableForm.resetFields();
     };
 
-    const handleDetailTableFormSubmit = (values) => {
-        console.log('Form Values:', values);
-        // BACKEND REQUEST HERE
-        setIsDetailTableAddModalVisible(false);
-        detailTableForm.resetFields();
+    const handleDetailTableFormSubmit = async (values) => {
+        try {
+            const response = await Axios.post('/api/detay/insert', values);
+            console.log('Response:', response.data);
+            fetchDetail();
+            setIsDetailTableAddModalVisible(false);
+            detailTableForm.resetFields();
+        } catch (error) {
+            console.error('Error sending form data:', error);
+        }
     };
 
     return (
@@ -273,7 +273,7 @@ const Home = () => {
                                             />
                                         ) : (
                                             <Input
-                                                placeholder="Ara"
+                                                placeholder="Ara..."
                                                 onChange={(e) =>
                                                     handleFilter(field.fieldName, e.target.value)
                                                 }
@@ -328,9 +328,9 @@ const Home = () => {
                     footer={null}
                 >
                     <Table
-                        dataSource={modalData}
+                        dataSource={filteredDetailData}
                         rowKey="id"
-                        pagination={{ pageSize: perPage }}
+                        pagination={{ pageSize: perPage - 6 }}
                         className='detail-table'
                     >
                         {detailTableConfig.fields.map((field) => (
@@ -393,7 +393,7 @@ const Home = () => {
                                             },
                                         ]}
                                     >
-                                        <Input />
+                                        <InputNumber />
                                     </Form.Item>
                                 ))}
                             <Button type="primary" htmlType="submit">

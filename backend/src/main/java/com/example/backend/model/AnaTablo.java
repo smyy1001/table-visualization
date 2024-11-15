@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "ANATABLO", schema = "SYS")
+@Table(name = "ANATABLO")
 public class AnaTablo {
 
     @Id
