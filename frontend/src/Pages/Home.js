@@ -1,36 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import Axios from '../Axios';
 import { Modal, Table, Tooltip, Input, InputNumber, DatePicker, Form, Button } from 'antd';
 import { FileAddTwoTone } from '@ant-design/icons';
+import Axios from '../Axios';
 import moment from 'moment';
 import './Home.css';
 
 const Home = () => {
     const [perPage] = useState(11);
-    const [appConfig, setAppConfig] = useState(null);
-    const [mainTableData, setMainTableData] = useState([]);
-    const [detailTableData, setDetailTableData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
-    const [filteredDetailData, setFilteredDetailData] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isMainTableAddModalVisible, setIsMainTableAddModalVisible] = useState(false);
-    const [isDetailTableAddModalVisible, setIsDetailTableAddModalVisible] = useState(false);
-    const [modalTitle, setModalTitle] = useState('');
-    const [sortOrder, setSortOrder] = useState(null);
-    const [sortedColumn, setSortedColumn] = useState(null);
-    const [detailSortOrder, setDetailSortOrder] = useState(null);
-    const [detailSortedColumn, setDetailSortedColumn] = useState(null);
     const [mainTableForm] = Form.useForm();
     const [detailTableForm] = Form.useForm();
+    const [modalTitle, setModalTitle] = useState('');
+    const [sortOrder, setSortOrder] = useState(null);
+    const [appConfig, setAppConfig] = useState(null);
+    const [filteredData, setFilteredData] = useState([]);
+    const [sortedColumn, setSortedColumn] = useState(null);
+    const [mainTableData, setMainTableData] = useState([]);
+    const [detailTableData, setDetailTableData] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [detailSortOrder, setDetailSortOrder] = useState(null);
+    const [filteredDetailData, setFilteredDetailData] = useState([]);
+    const [detailSortedColumn, setDetailSortedColumn] = useState(null);
+    const [isMainTableAddModalVisible, setIsMainTableAddModalVisible] = useState(false);
+    const [isDetailTableAddModalVisible, setIsDetailTableAddModalVisible] = useState(false);
 
-    useEffect(() => {
-        async function fetchConfig() {
-            const result = await Axios.get('/api/getConfig');
-            setAppConfig(result.data);
-        }
-        fetchConfig();
-    }, []);
 
+    // Use Effects
     async function fetchMain() {
         const result = await Axios.get('/api/ana');
         setMainTableData(result.data);
@@ -41,6 +35,15 @@ const Home = () => {
         setDetailTableData(result.data);
         setFilteredDetailData(result.data);
     }
+    useEffect(() => {
+        async function fetchConfig() {
+            const result = await Axios.get('/api/getConfig');
+            setAppConfig(result.data);
+        }
+        fetchConfig();
+    }, []);
+
+
 
     useEffect(() => {
         fetchMain();
