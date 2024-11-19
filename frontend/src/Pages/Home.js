@@ -260,24 +260,28 @@ const Home = () => {
                                 filterDropdown={() =>
                                     field.canFilter ? (
                                         field.fieldName === 'recordDate' ? (
-                                            <DatePicker
-                                                onChange={(date) => {
-                                                    if (date === null) {
-                                                        handleFilter(field.fieldName, null);
-                                                    } else {
-                                                        const newDate = new Date(date);
-                                                        const formattedDate = moment(newDate).format('YYYY-MM-DD');
-                                                        handleFilter(field.fieldName, formattedDate);
-                                                    }
-                                                }}
-                                            />
+                                            <Tooltip title='Filtrelemek için tıklayınız.'>
+                                                <DatePicker
+                                                    onChange={(date) => {
+                                                        if (date === null) {
+                                                            handleFilter(field.fieldName, null);
+                                                        } else {
+                                                            const newDate = new Date(date);
+                                                            const formattedDate = moment(newDate).format('YYYY-MM-DD');
+                                                            handleFilter(field.fieldName, formattedDate);
+                                                        }
+                                                    }}
+                                                />
+                                            </Tooltip>
                                         ) : (
-                                            <Input
-                                                placeholder="Ara..."
-                                                onChange={(e) =>
-                                                    handleFilter(field.fieldName, e.target.value)
-                                                }
-                                            />
+                                            <Tooltip title='Filtrelemek için tıklayınız.'>
+                                                <Input
+                                                    placeholder="Ara..."
+                                                    onChange={(e) =>
+                                                        handleFilter(field.fieldName, e.target.value)
+                                                    }
+                                                />
+                                            </Tooltip>
                                         )
                                     ) : null
                                 }

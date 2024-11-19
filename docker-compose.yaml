@@ -6,12 +6,12 @@ services:
     image: backend-image
     build: ./backend
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/XEPDB1
-      SPRING_DATASOURCE_USERNAME: system
-      SPRING_DATASOURCE_PASSWORD: password
-      FRONTEND_URL: http://localhost:3000
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      FRONTEND_URL: ${FRONTEND_URL}
     networks:
       - my-shared-network
 
@@ -24,10 +24,10 @@ services:
       - ./frontend/public:/usr/src/app/public
       - ./frontend/package.json:/usr/src/app/package.json
     ports:
-      - "3000:3000" 
+      - "${REACT_APP_FRONTEND_PORT}:3000" 
     environment:
       CHOKIDAR_USEPOLLING: true
-      REACT_APP_BACKEND_URL: http://localhost:8080
+      REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
     depends_on:
       - app
 
