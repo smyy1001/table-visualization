@@ -14,7 +14,7 @@ public class AnaTablo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Float id;
 
     @Column(name = "NAME", nullable = false)
     private String name;
@@ -23,11 +23,11 @@ public class AnaTablo {
     private Date recordDate;
 
     // Getters and Setters
-    public Long getId() {
+    public Float getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Float id) {
         this.id = id;
     }
 

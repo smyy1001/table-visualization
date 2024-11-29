@@ -13,25 +13,25 @@ public class DetTablo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Float id;
 
     @Column(name = "NAME", nullable = false)
-    private Long name;
+    private Float name;
 
     // Getters and Setters
-    public Long getId() {
+    public Float getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Float id) {
         this.id = id;
     }
 
-    public Long getName() {
+    public Float getName() {
         return name;
     }
 
-    public void setName(Long name) {
+    public void setName(Float name) {
         this.name = name;
     }
 }
