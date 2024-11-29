@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Table, Tooltip, Input, InputNumber, DatePicker, Form, Button } from 'antd';
-import { FileAddTwoTone } from '@ant-design/icons';
+import { FileAddTwoTone, DeleteTwoTone } from '@ant-design/icons';
 import Axios from '../Axios';
 import moment from 'moment';
 import './Home.css';
@@ -23,15 +23,17 @@ const Home = () => {
     const [isMainTableAddModalVisible, setIsMainTableAddModalVisible] = useState(false);
     const [isDetailTableAddModalVisible, setIsDetailTableAddModalVisible] = useState(false);
 
-
-    // Use Effects
     async function fetchMain() {
-        const result = await Axios.get('/api/ana');
+        const result = await Axios.get('/api/trino/query', {
+            params: { sql: "SELECT * FROM oracle.NEW_USER.ANATABLO" }
+        });
         setMainTableData(result.data);
         setFilteredData(result.data);
     }
     async function fetchDetail() {
-        const result = await Axios.get('/api/detay');
+        const result = await Axios.get('/api/trino/query', {
+            params: { sql: "SELECT * FROM oracle.NEW_USER.DETTABLO" }
+        });
         setDetailTableData(result.data);
         setFilteredDetailData(result.data);
     }
@@ -140,7 +142,7 @@ const Home = () => {
     };
 
 
-    // Main Table 
+
     const showMainTableAddModal = () => {
         setIsMainTableAddModalVisible(true);
     };
@@ -157,7 +159,10 @@ const Home = () => {
         };
 
         try {
-            const response = await Axios.post('/api/ana/insert', formattedValues);
+            const response = await Axios.post('/api/trino/query', {
+                sql: "INSERT INTO oracle.NEW_USER.ANATABLO (NAME, RECORDDATE) VALUES (?, ?)",
+                values: [values.name, values.recordDate]
+            });
             console.log('Response:', response.data);
             fetchMain();
             setIsMainTableAddModalVisible(false);
@@ -167,8 +172,21 @@ const Home = () => {
         }
     };
 
+    const handleMainDelete = async (id) => {
+        try {
+            const response = await Axios.post('/api/trino/query', {
+                sql: "DELETE FROM oracle.NEW_USER.ANATABLO WHERE ID = ?",
+                values: [id]
+            });
 
-    // Detail Table
+            console.log('Response:', response.data);
+            fetchMain();
+        } catch (error) {
+            console.error('Error deleting record:', error);
+        }
+    }
+
+
     const showDetailTableAddModal = () => {
         setIsDetailTableAddModalVisible(true);
     };
@@ -180,7 +198,11 @@ const Home = () => {
 
     const handleDetailTableFormSubmit = async (values) => {
         try {
-            const response = await Axios.post('/api/detay/insert', values);
+            const response = await Axios.post('/api/trino/query', {
+                sql: "INSERT INTO oracle.NEW_USER.DETTABLO (NAME) VALUES (?)",
+                values: [values.name]
+            });
+
             console.log('Response:', response.data);
             fetchDetail();
             setIsDetailTableAddModalVisible(false);
@@ -189,6 +211,20 @@ const Home = () => {
             console.error('Error sending form data:', error);
         }
     };
+
+    const handleDetailDelete = async (id) => {
+        try {
+            const response = await Axios.post('/api/trino/query', {
+                sql: "DELETE FROM oracle.NEW_USER.DETTABLO WHERE ID = ?",
+                values: [id]
+            });
+
+            console.log('Response:', response.data);
+            fetchDetail();
+        } catch (error) {
+            console.error('Error deleting record:', error);
+        }
+    }
 
     return (
         <>
@@ -220,77 +256,98 @@ const Home = () => {
                     pagination={{ pageSize: perPage }}
                     className='home-table'
                 >
-                    {mainTableConfig.fields.map((field) => {
-                        if (!field.viewOnResults) return null;
+                    <Table.Column
+                        key="delete"
+                        className="home-table-column"
+                        title={
+                            <div className="home-table-column-label2">
+                                Sil
+                            </div>
+                        }
+                        render={(text, record) => (
+                            <Tooltip title="Silmek için tıklayınız.">
+                                <DeleteTwoTone
+                                    onClick={() => handleMainDelete(text.id)}
+                                    style={{ cursor: "pointer" }}
+                                />
+                            </Tooltip>
+                        )}
+                    />;
+                    {
+                        mainTableConfig.fields.map((field) => {
+                            if (!field.viewOnResults) return null;
 
-                        return (
-                            <Table.Column
-                                key={field.fieldName}
-                                className='home-table-column'
-                                title={
-                                    <div className='home-table-column-label'>
-                                        {field.canSort ? (
-                                            <Tooltip title='Sıralamak için tıklayın!'>
-                                                <div onClick={() => handleSort(field.fieldName)}>
-                                                    {field.fieldLabel}
-                                                </div>
-                                            </Tooltip>
-                                        ) : (
-                                            field.fieldLabel
-                                        )}
-                                    </div>
-                                }
-                                dataIndex={field.fieldName}
-                                render={(text, record) => {
-                                    let formattedText = text;
-                                    if (field.fieldName === 'recordDate') {
-                                        formattedText = moment(text).format('YYYY-MM-DD');
+                            return (
+                                <Table.Column
+                                    key={field.fieldName}
+                                    className="home-table-column"
+                                    title={
+                                        <div className="home-table-column-label">
+                                            {field.canSort ? (
+                                                <Tooltip title="Sıralamak için tıklayın!">
+                                                    <div onClick={() => handleSort(field.fieldName)}>
+                                                        {field.fieldLabel}
+                                                    </div>
+                                                </Tooltip>
+                                            ) : (
+                                                field.fieldLabel
+                                            )}
+                                        </div>
                                     }
-                                    return field.triggerTable ? (
-                                        <a
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleTriggerClick(field.triggerTable);
-                                            }}
-                                        >
-                                            {formattedText}
-                                        </a>
-                                    ) : (
-                                        formattedText
-                                    );
-                                }}
-                                filterDropdown={() =>
-                                    field.canFilter ? (
-                                        field.fieldName === 'recordDate' ? (
-                                            <Tooltip title='Filtrelemek için tıklayınız.'>
-                                                <DatePicker
-                                                    onChange={(date) => {
-                                                        if (date === null) {
-                                                            handleFilter(field.fieldName, null);
-                                                        } else {
-                                                            const newDate = new Date(date);
-                                                            const formattedDate = moment(newDate).format('YYYY-MM-DD');
-                                                            handleFilter(field.fieldName, formattedDate);
-                                                        }
-                                                    }}
-                                                />
-                                            </Tooltip>
+                                    dataIndex={field.fieldName}
+                                    render={(text, record) => {
+                                        let formattedText = text;
+                                        if (field.fieldName === "recordDate") {
+                                            formattedText = moment(text).format("YYYY-MM-DD");
+                                        }
+                                        return field.triggerTable ? (
+                                            <a
+                                                href="#"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleTriggerClick(field.triggerTable);
+                                                }}
+                                            >
+                                                {formattedText}
+                                            </a>
                                         ) : (
-                                            <Tooltip title='Filtrelemek için tıklayınız.'>
-                                                <Input
-                                                    placeholder="Ara..."
-                                                    onChange={(e) =>
-                                                        handleFilter(field.fieldName, e.target.value)
-                                                    }
-                                                />
-                                            </Tooltip>
-                                        )
-                                    ) : null
-                                }
-                            />
-                        );
-                    })}
+                                            formattedText
+                                        );
+                                    }}
+                                    filterDropdown={() =>
+                                        field.canFilter ? (
+                                            field.fieldName === "recordDate" ? (
+                                                <Tooltip title="Filtrelemek için tıklayınız.">
+                                                    <DatePicker
+                                                        onChange={(date) => {
+                                                            if (date === null) {
+                                                                handleFilter(field.fieldName, null);
+                                                            } else {
+                                                                const newDate = new Date(date);
+                                                                const formattedDate = moment(newDate).format(
+                                                                    "YYYY-MM-DD"
+                                                                );
+                                                                handleFilter(field.fieldName, formattedDate);
+                                                            }
+                                                        }}
+                                                    />
+                                                </Tooltip>
+                                            ) : (
+                                                <Tooltip title="Filtrelemek için tıklayınız.">
+                                                    <Input
+                                                        placeholder="Ara..."
+                                                        onChange={(e) =>
+                                                            handleFilter(field.fieldName, e.target.value)
+                                                        }
+                                                    />
+                                                </Tooltip>
+                                            )
+                                        ) : null
+                                    }
+                                />
+                            );
+                        })
+                    }
                 </Table>
 
 
@@ -302,7 +359,6 @@ const Home = () => {
                 >
                     <Form form={mainTableForm} layout="vertical" onFinish={handleMainTableFormSubmit}>
                         {mainTableConfig.fields
-                            // .filter((field) => field.insertable)
                             .map((field) => (
                                 <Form.Item
                                     key={field.fieldName}
@@ -340,6 +396,23 @@ const Home = () => {
                         pagination={{ pageSize: perPage - 6 }}
                         className='detail-table'
                     >
+                        <Table.Column
+                            key="delete"
+                            className="home-table-column"
+                            title={
+                                <div className="home-table-column-label2">
+                                    Sil
+                                </div>
+                            }
+                            render={(text, record) => (
+                                <Tooltip title="Silmek için tıklayınız.">
+                                    <DeleteTwoTone
+                                        onClick={() => handleDetailDelete(text.id)}
+                                        style={{ cursor: "pointer" }}
+                                    />
+                                </Tooltip>
+                            )}
+                        />;
                         {detailTableConfig.fields.map((field) => (
                             <Table.Column
                                 key={field.fieldName}
@@ -387,7 +460,7 @@ const Home = () => {
                     >
                         <Form form={detailTableForm} layout="vertical" onFinish={handleDetailTableFormSubmit}>
                             {detailTableConfig.fields
-                                // .filter((field) => field.insertable)
+
                                 .map((field) => (
                                     <Form.Item
                                         key={field.fieldName}
