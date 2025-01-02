@@ -87,6 +87,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>5.0.1</version> <!-- Güncel sürüm numarasını kontrol edin -->
+		</dependency>
 
 	</dependencies>
 	<build>
