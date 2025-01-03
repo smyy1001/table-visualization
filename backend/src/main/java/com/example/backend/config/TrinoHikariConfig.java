@@ -30,10 +30,10 @@ public class TrinoHikariConfig {
 
         // Hikari-specific settings
         hikariConfig.setAutoCommit(true);
-        hikariConfig.setMaximumPoolSize(10); // Set maximum pool size
-        hikariConfig.setMinimumIdle(2); // Set minimum idle connections
-        hikariConfig.setIdleTimeout(30000); // Set idle timeout in milliseconds
-        hikariConfig.setConnectionTimeout(30000); // Set connection timeout in milliseconds
+        hikariConfig.setMaximumPoolSize(10);
+        hikariConfig.setMinimumIdle(2);
+        hikariConfig.setIdleTimeout(30000);
+        hikariConfig.setConnectionTimeout(30000);
 
         return new HikariDataSource(hikariConfig);
     }

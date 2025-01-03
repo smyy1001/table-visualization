@@ -1,13 +1,8 @@
 package com.example.backend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import com.example.backend.service.TrinoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -21,15 +16,36 @@ public class TrinoController {
 
     @GetMapping("/query")
     public List<Map<String, Object>> executeQuery(@RequestParam String sql) {
-        return trinoService.fetchTrinoData(sql);
+        return trinoService.fetchData(sql);
     }
 
-    @PostMapping("/query")
-    public int executeInsertQuery(@RequestBody Map<String, Object> requestBody) {
+    @PostMapping("/update")
+    public int executeUpdate(@RequestBody Map<String, Object> requestBody) {
+        String sql = (String) requestBody.get("sql");
+        List<Object> values = (List<Object>) requestBody.get("values");
+        return trinoService.updateData(sql, values.toArray());
+    }
+
+    @PostMapping("/insert")
+    public int executeInsert(@RequestBody Map<String, Object> requestBody) {
+        String sql = (String) requestBody.get("sql");
+        List<Object> values = (List<Object>) requestBody.get("values");
+        return trinoService.insertData(sql, values.toArray());
+    }
+
+    @DeleteMapping("/delete")
+    public int executeDelete(@RequestBody Map<String, Object> requestBody) {
         String sql = (String) requestBody.get("sql");
         List<Object> values = (List<Object>) requestBody.get("values");
 
-        // Call the service to execute the INSERT query
-        return trinoService.executeUpdateQuery(sql, values);
+        if (sql == null || sql.isEmpty()) {
+            throw new IllegalArgumentException("SQL query cannot be null or empty");
+        }
+
+        if (values == null || values.isEmpty()) {
+            throw new IllegalArgumentException("Values cannot be null or empty");
+        }
+
+        return trinoService.deleteData(sql, values.toArray());
     }
 }

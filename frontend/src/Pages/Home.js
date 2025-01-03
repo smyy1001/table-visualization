@@ -159,9 +159,9 @@ const Home = () => {
         };
 
         try {
-            const response = await Axios.post('/api/trino/query', {
+            const response = await Axios.post('/api/trino/insert', {
                 sql: "INSERT INTO oracle.NEW_USER.ANATABLO (NAME, RECORDDATE) VALUES (?, ?)",
-                values: [values.name, values.recordDate]
+                values: [formattedValues.name, formattedValues.recordDate]
             });
             console.log('Response:', response.data);
             fetchMain();
@@ -174,11 +174,11 @@ const Home = () => {
 
     const handleMainDelete = async (id) => {
         try {
-            const response = await Axios.post('/api/trino/query', {
-                sql: "DELETE FROM oracle.NEW_USER.ANATABLO WHERE ID = ?",
-                values: [id]
+            const sql = "DELETE FROM oracle.NEW_USER.ANATABLO WHERE ID = ?";
+            const values = [id];
+            const response = await Axios.delete('/api/trino/delete', {
+                data: { sql, values },
             });
-
             console.log('Response:', response.data);
             fetchMain();
         } catch (error) {
@@ -198,7 +198,7 @@ const Home = () => {
 
     const handleDetailTableFormSubmit = async (values) => {
         try {
-            const response = await Axios.post('/api/trino/query', {
+            const response = await Axios.post('/api/trino/insert', {
                 sql: "INSERT INTO oracle.NEW_USER.DETTABLO (NAME) VALUES (?)",
                 values: [values.name]
             });
@@ -214,11 +214,11 @@ const Home = () => {
 
     const handleDetailDelete = async (id) => {
         try {
-            const response = await Axios.post('/api/trino/query', {
-                sql: "DELETE FROM oracle.NEW_USER.DETTABLO WHERE ID = ?",
-                values: [id]
+            const sql = "DELETE FROM oracle.NEW_USER.DETTABLO WHERE ID = ?";
+            const values = [id];
+            const response = await Axios.delete('/api/trino/delete', {
+                data: { sql, values },
             });
-
             console.log('Response:', response.data);
             fetchDetail();
         } catch (error) {
